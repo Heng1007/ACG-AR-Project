@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: -3724728585418642287, guid: ee7349ff5c401a34b84edb9311e1bb3d,
         type: 3}
       propertyPath: m_Name
-      value: penguin_model
+      value: penguin_model_Prefab
       objectReference: {fileID: 0}
     - target: {fileID: -2868684280640998158, guid: ee7349ff5c401a34b84edb9311e1bb3d,
         type: 3}

@@ -77,6 +77,10 @@ public class PlaceAndDragObjectsOnPlane : MonoBehaviour
     [Tooltip("Maximum distance from the object's position to consider it selected (in meters).")]
     float selectionDistanceThreshold = 0.1f;
 
+    [SerializeField]
+    [Tooltip("Show the name of the selected object above it.")]
+    Canvas objectNameCanvas;
+
     List<GameObject> spawnedObjects = new List<GameObject>();
     GameObject selectedItem;
     private bool isDragging;
@@ -286,6 +290,16 @@ public class PlaceAndDragObjectsOnPlane : MonoBehaviour
                 }
             }
         }
+
+        // Update the canvas rotation to face the camera
+        objectNameCanvas.transform.LookAt(Camera.main.transform);
+        objectNameCanvas.transform.Rotate(0, 180, 0); // Rotate to face the camera
+
+        //Update the position of the name canvas above the selected object
+        if (selectedItem != null)
+        {
+            objectNameCanvas.transform.position = selectedItem.transform.position + Vector3.up * 0.25f; // Adjust the position above the object
+        }
     }
 
     void OnTouchStarted(Vector3 screenPosition)
@@ -324,6 +338,10 @@ public class PlaceAndDragObjectsOnPlane : MonoBehaviour
                         isDragging = modeSelector.IsTranslationEnabled; // Only drag if Translation is enabled
                         modeSelector.SetDeleteButtonVisibility(true);
                         Debug.Log($"Selected object: {selectedItem.name}");
+                        // Show the name of the selected object above it
+                        objectNameCanvas.gameObject.SetActive(true);
+                        objectNameCanvas.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = selectedItem.transform.GetChild(0).name; // Assuming the name is in the first child
+                        objectNameCanvas.transform.position = selectedItem.transform.position + Vector3.up * 0.25f; // Adjust the position above the object
                     }
                     else if (modeSelector.IsTranslationEnabled)
                     {
@@ -369,6 +387,11 @@ public class PlaceAndDragObjectsOnPlane : MonoBehaviour
                     lookPos.y = 0;
                     newObject.transform.rotation = Quaternion.LookRotation(lookPos);
                     Debug.Log($"Spawned object: {newObject.name} at: {hitPose.position}");
+
+                    // Show the name of the spawned object above it
+                    objectNameCanvas.gameObject.SetActive(true);
+                    objectNameCanvas.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = newObject.transform.GetChild(0).name; // Assuming the name is in the first child
+                    objectNameCanvas.transform.position = newObject.transform.position + Vector3.up * 0.25f; // Adjust the position above the object
                 }
                 else
                 {
@@ -454,6 +477,9 @@ public class PlaceAndDragObjectsOnPlane : MonoBehaviour
         {
             Debug.LogWarning("No selected item to delete.");
         }
+
+        // Hide the name canvas
+        objectNameCanvas.gameObject.SetActive(false);
     }
 
     void ClearAllItems()
@@ -470,5 +496,8 @@ public class PlaceAndDragObjectsOnPlane : MonoBehaviour
             modeSelector.SetDeleteButtonVisibility(false);
         }
         Debug.Log("Cleared all spawned objects.");
+
+        // Hide the name canvas
+        objectNameCanvas.gameObject.SetActive(false);
     }
 }
